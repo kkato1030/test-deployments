@@ -4,7 +4,6 @@ sha=$1
 
 repo="kkato1030/test-deployments"
 deployments_endpoint_url="https://api.github.com/repos/${repo}/deployments"
-service_domain="example.com"
 
 function get_deployment_status_by_sha () {
   local sha=$1
