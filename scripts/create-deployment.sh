@@ -24,7 +24,7 @@ function create_deployment () {
     -H "Authorization: Bearer ${TOKEN}"      \
     -H "X-GitHub-Api-Version: 2022-11-28"    \
     $deployments_endpoint_url                \
-    -d '{"ref":"'$branch'","task":"'$env'-deploy","environment":"'$env'","auto_merge":false}' | jq -r '.statuses_url'
+    -d '{"ref":"'$branch'","task":"'$env'-deploy","environment":"'$env'","auto_merge":false,"required_contexts":[]}' | jq -r '.statuses_url'
 }
 
 function create_deployment_status () {
