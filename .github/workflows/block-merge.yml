@@ -51,7 +51,7 @@ jobs:
         id: change-status-by-deployment-status
         if: ${{ github.event_name == 'deployment_status' }}
         run: |
-          status=${{ github.event.deployment_status }}
+          status=${{ github.event.deployment_status.state }}
           if [ "$status" == 'success' ]; then
             echo '[INFO] related deployment status is ${status}.'
             exit 0
