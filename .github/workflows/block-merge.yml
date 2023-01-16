@@ -13,8 +13,8 @@ jobs:
   block-merge:
     runs-on: ubuntu-latest
     steps:
-      - name: Toggle merge status (PR)
-        id: toggle-merge-status
+      - name: Change merge status (triggered by PR)
+        id: change-status-by-pr
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           ENDPOINT_URL="${{ github.api_url }}/repos/${{ github.repository }}/deployments"
@@ -47,8 +47,8 @@ jobs:
             exit 1
           fi
 
-      - name: Toggle merge status (Deployment status)
-        id: toggle-merge-status
+      - name: Change merge status (triggered by Deployment status)
+        id: change-status-by-deployment-status
         if: ${{ github.event_name == 'deployment_status' }}
         run: |
           status=${{ github.event.deployment_status }}
