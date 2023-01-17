@@ -15,7 +15,6 @@ jobs:
     steps:
       - name: Check Deployment status (triggered by PR)
         id: check-deployment-status-pr
-        if: ${{ github.event_name == 'pull_request' }}
         run: |
           ENDPOINT_URL="${{ github.api_url }}/repos/${{ github.repository }}/deployments"
           statuses_url=$(curl -s -X GET \
@@ -39,31 +38,5 @@ jobs:
             exit 0
           else
             echo '[ERROR] related deployment status is not in [active, inactive].'
-            exit 1
-          fi
-        continue-on-error: true
-
-      - name: Check deployment status (triggered by Deployment status)
-        id: check-deployment-status-event
-        if: ${{ github.event_name == 'deployment_status' }}
-        run: |
-          status=${{ github.event.deployment_status.state }}
-          if [ "$status" == 'success' ]; then
-            echo '[INFO] related deployment status is ${status}.'
-            exit 0
-          else
-            echo '[ERROR] related deployment status is not success.'
-            exit 1
-          fi
-        continue-on-error: true
-
-      - name: Update workflow status
-        id: update-workflow-status
-        if: ${{ always() }}
-        run: |
-          if [ ${{ steps.check-deployment-status-pr.outcome }} == 'success' ] \
-          || [ ${{ steps.check-deployment-status-event.outcome }} == 'success' ]; then
-            exit 0
-          else
             exit 1
           fi
