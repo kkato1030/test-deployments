@@ -61,7 +61,7 @@ jobs:
         id: update-workflow-status
         if: ${{ always() }}
         run: |
-          if [ ${{ steps.check-deployment-status-pr.outcome }} == 'success' ]
+          if [ ${{ steps.check-deployment-status-pr.outcome }} == 'success' ] \
           || [ ${{ steps.check-deployment-status-event.outcome }} == 'success' ]; then
             exit 0
           else
