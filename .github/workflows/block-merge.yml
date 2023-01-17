@@ -13,8 +13,8 @@ jobs:
   block-merge:
     runs-on: ubuntu-latest
     steps:
-      - name: Change merge status (triggered by PR)
-        id: change-status-by-pr
+      - name: Check Deployment status (triggered by PR)
+        id: check-deployment-status-pr
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           ENDPOINT_URL="${{ github.api_url }}/repos/${{ github.repository }}/deployments"
@@ -41,9 +41,10 @@ jobs:
             echo '[ERROR] related deployment status is not in [active, inactive].'
             exit 1
           fi
+        continue-on-error: true
 
-      - name: Change merge status (triggered by Deployment status)
-        id: change-status-by-deployment-status
+      - name: Check deployment status (triggered by Deployment status)
+        id: check-deployment-status-event
         if: ${{ github.event_name == 'deployment_status' }}
         run: |
           status=${{ github.event.deployment_status.state }}
@@ -52,5 +53,17 @@ jobs:
             exit 0
           else
             echo '[ERROR] related deployment status is not success.'
+            exit 1
+          fi
+        continue-on-error: true
+
+      - name: Update workflow status
+        id: update-workflow-status
+        if: ${{ always() }}
+        run: |
+          if [ ${{ steps.check-deployment-status-pr.outcome }} == 'success' ]
+          || [ ${{ steps.check-deployment-status-event.outcome }} == 'success' ]; then
+            exit 0
+          else
             exit 1
           fi
